@@ -23,7 +23,7 @@
   - `assets`: this directory consists of all the images for the splash screens and such
 
 ### Feature
-###### Search for movies in the app to view their details as provided by the [OMDb API](http://www.omdbapi.com/)
+###### Scan the barcode of items to get information on the objects or add items to the database (in development)
 
 ### Credits
 - Aditdi for this idea of a wonderful project.
