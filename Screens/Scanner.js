@@ -1,34 +1,41 @@
 import React, { Component } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import APIReq from '../API/ApiCalls';
 
 export default class Scanner extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       hasPermission: null,
       scanned: false,
     }
   }
 
-  handleBarCodeScanned = ({ type, data }) => {
-    this.setState(prevState => ({ scanned: true }))
-    alert(`Scanned item of type ${type} and data ${data}!`);
+  handleBarCodeScanned = ({ data }) => {
+    this.setState(() => ({ scanned: true }))
+    APIReq(data)
+      .then(res => {
+        const itemName = `${res['brand_name']} ${res['item_name']}`;
+        this.props.navigation.push('ItemInfo', { res: res, itemName: itemName });
+        console.log(res);
+        console.log(itemName);
+      }).catch(err => alert(err));
   }
 
   async componentDidMount() {
-    const { status } = await BarCodeScanner.requestPermissionsAsync();
-    this.setState(prevState => ({ hasPermission: status === 'granted' }));
+    const {status} = await BarCodeScanner.requestPermissionsAsync();
+    this.setState(() => ({ hasPermission: status === 'granted' }));
   }
 
   render() {
     let viewContent;
     if (!this.state.hasPermission) {
-      viewContent = (<Text style={styles.display}>The app doesn't have permission for the camera</Text>);
+      viewContent = (<Text style={styles.permissionText}>The app doesn't have permission for the camera</Text>);
     } else {
       viewContent = (<BarCodeScanner
         style={StyleSheet.absoluteFillObject}
-        onBarCodeScanned={this.state.scanned ? undefined : this.handleBarCodeScanned } />);
+        onBarCodeScanned={this.state.scanned ? undefined : this.handleBarCodeScanned} />);
     }
     return (
       <View style={styles.display}>
@@ -36,8 +43,8 @@ export default class Scanner extends Component {
         { this.state.scanned &&
         <View style={styles.btnContainer}>
           <Button title='Scan Again'
-            onPress={() => this.setState(prevstate => ({scanned: false}))} />
-        </View>}
+            onPress={() => this.setState(() => ({scanned: false}))} />
+        </View> }
       </View>
     );
   }
@@ -46,7 +53,9 @@ export default class Scanner extends Component {
 const styles = StyleSheet.create({
   display: {
     flex: 1,
-    width: '100%'
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   btnContainer: {
     width: '100%',
@@ -54,5 +63,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: '#f1f1f1',
     padding: 5
+  },
+  permissionText: {
+    width: '100%',
+    textAlign: 'center',
+    fontSize: 30
   }
-})
+});

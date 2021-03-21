@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 // import screens
 import Home from './Screens/Home';
 import Scanner from './Screens/Scanner';
+import ItemInfo from './Screens/ItemInfo';
 
 // get the stack navigator
 const stack = createStackNavigator();
@@ -19,6 +20,7 @@ export default class App extends Component {
         <stack.Navigator initialRouteName={ Home }>
           <stack.Screen name="Home" component={ Home } />
           <stack.Screen name="Scanner" component={ Scanner } />
+          <stack.Screen name="ItemInfo" component={ ItemInfo } />
         </stack.Navigator>
       </NavigationContainer>
     )
